@@ -81,7 +81,7 @@ table(beer$State[beer$BreweryID])
 
 DBI was also tasked with providing a better understanding of MABco's beer offerings in
 terms of alcohol content (ABV).  We determined that the highest median ABV is 0.092, and
-is available in the states of Georgia and Florida when computing the average of all beer
+is available in the states of Georgia, Florida, and Idaho when computing the average of all beer
 offerings in each state respectively.
 
 We have also provided median IBU values for each state for reference in the table below.
@@ -124,7 +124,7 @@ p
 
 Upon review of the results we derived from looking at the median alcohol content (ABV),
 as well as the median bitterness levels (IBU) we are able to confirm that the states with
-beer offerings with the highest ABV are Georgia and Florida (with median ABVs of 0.092) as
+beer offerings with the highest ABV are Georgia, Florida, and Idaho (with median ABVs of 0.092) as
 previously confirmed.  
 
 However the beer with the highest ABV is Lee Hill Series Vol. 5 - 
