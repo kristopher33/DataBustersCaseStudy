@@ -1,0 +1,111 @@
+---
+title: "Beer Case Study"
+author: "Griffin J. Lane"
+date: "October 18, 2017"
+output: html_document
+---
+
+#Beer Case Study
+###The client, Mega Awesome Beer Corp. (MABco), wants us to...  etc etc... 
+
+# 1a. import a csv file include the column name
+
+```{r, echo=TRUE}
+BeerData <- read.csv2(file="C:/Users/Griff/OneDrive/Documents/!_SKOOL/Doing Data Science/Teamwork/Case-Study-1/MSDS Project/Beers.csv", header=TRUE, sep=",", col.name=c("Name", "BeerID", "ABV", "IBU", "BreweryID", "Style", "Ounces"))
+
+BrewiesData <- read.csv2(file="C:/Users/Griff/OneDrive/Documents/!_SKOOL/Doing Data Science/Teamwork/Case-Study-1/MSDS Project/Breweries.csv", header=TRUE, sep=",", col.name=c("BreweryID", "BreweryName", "City", "State"))
+```
+
+# 1b. display the summary and structure of the file
+
+```{r}
+summary (BeerData)
+str(BeerData)
+summary (BrewiesData)
+str(BrewiesData)
+```
+
+# merge the files
+```{r,  echo=TRUE}
+merged <- merge(BeerData, BrewiesData, by = "BreweryID", all=FALSE)
+```
+
+
+#  top and bottom 6 of merge file
+```{r, echo=TRUE}
+head(merged)
+tail(merged)
+```
+
+# display number of NAs
+
+```{r, echo=TRUE}
+##First we must fix the numeric columns incorrectly listed as ordered factors
+##A direct conversion to a numeric will instead return the rank of the factor
+##Converting to a matrix first avoids this issue
+merged$ABV <- as.numeric(as.matrix(merged$ABV))
+merged$Ounces <- as.numeric(merged$Ounces)
+
+
+
+colSums(is.na(merged))
+```
+
+# sort by city
+
+```{r, echo=TRUE}
+beer <- merged[order(merged$City),] 
+```
+
+# How many breweries are present in each state
+```{r, echo=TRUE}
+table(beer$State[beer$BreweryID])
+```
+
+
+###The client also wishes to examine the median alcohol content and IBUs for each state
+```{r}
+
+##Create columns for both measurements to allow for quick lookups in the future on a per tuple basis
+beer$StateABVMedian <- sapply(beer$ABV[beer$State], median)
+beer$StateIBUMedian <- sapply(beer$IBU[beer$State], median)
+
+##Create a list of every state included and store it in a variable
+allStates <- unique(beer$State[beer$BreweryID])
+
+##Use that list to index the new columns and create a data frame to display the findings
+mediansByState <- data.frame(State=allStates, ABV_median = beer$StateABVMedian[allStates], IBU_median = beer$StateIBUMedian[allStates])
+
+##Display the ne data frame that holds the median data
+mediansByState
+``` 
+
+###Visualization
+```{r}
+library(ggplot2)
+##Create a plot with the staes along the x-axis
+p <- ggplot2::ggplot(mediansByState, aes(x = State))
+
+##Create and add the y-axis. Also, give it a low alpha value and change it's fill color
+p <- p + geom_bar(aes(y = IBU_median, color = "IBU"), stat="identity", alpha = .5 , fill="blue")
+
+##Create and add the second y-axis. Also, give it a low alpha value and change it's fill color
+##Note that the extra 100 multiplier is to turn the scale of those data into a percentage scale
+p <- p + geom_bar(aes(y = ABV_median*100*6, color = "ABV"), alpha = .5 , fill="red", stat="identity")
+
+##Create the right side second axis and give it the inverse scale used to transform the data
+p <- p + scale_y_continuous(sec.axis = sec_axis(~./6, name = "ABV")) 
+
+##Display the ggplot and marvel at its splendor
+p
+```
+
+
+
+###For their records, the client has also asked that we determine which state sells the most bitter beer as well as the most alcoholic beer
+```{r}
+beer$State[which.max(beer$ABV)]
+
+beer$State[which.max(beer$IBU)]
+```
+
