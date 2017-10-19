@@ -1,6 +1,6 @@
 ---
 title: "Beer Case Study"
-author: "Griffin J. Lane"
+author: "Data Busters, Inc. (Griffin J. Lane, Kristopher Henley, Josephine McDaniel)"
 date: "October 18, 2017"
 output: html_document
 ---
