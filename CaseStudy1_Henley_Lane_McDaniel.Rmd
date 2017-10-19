@@ -81,8 +81,7 @@ table(beer$State[beer$BreweryID])
 
 DBI was also tasked with providing a better understanding of MABco's beer offerings in
 terms of alcohol content (ABV).  We determined that the highest median ABV is 0.092, and
-is available in the states of Georgia, Florida, and Idaho when computing the average of all beer
-offerings in each state respectively.
+was reported in the states of Georgia, Florida, and Idaho when computing the medians for all beer offerings in each state respectively.
 
 We have also provided median IBU values for each state for reference in the table below.
 ```{r, echo=TRUE}
@@ -124,35 +123,39 @@ p
 
 Upon review of the results we derived from looking at the median alcohol content (ABV),
 as well as the median bitterness levels (IBU) we are able to confirm that the states with
-beer offerings with the highest ABV are Georgia, Florida, and Idaho (with median ABVs of 0.092) as
-previously confirmed.  
+beer offerings with the highest median ABV are Georgia, Florida, and Idaho (with median ABVs of 0.092 respectively) as previously confirmed.  
 
-However the beer with the highest ABV is Lee Hill Series Vol. 5 - 
-Belgian Style Quadrupel Ale (0.128 ABV).  This beer is sold in COLORADO.
-```{r, echo=TRUE}
-##Need code chunk here producing this result??##
-```
-
-We are further able to confirm that the states with the most bitter beers as measured in
-IBU's are NY, OH, NC, OR, PA, NM, MT, SC, and NJ respectively, with each state returning
-a median IBU score of 135.  However, the individual state returning the highest IBU (138)
-is OREGON (Bitter Bitch Imperial IPA)
-```{r, echo=TRUE}
-##Need code chunk here producing this result??##
-```
-
-Is this working as expected?
+**However the beer with the highest ABV is Lee Hill Series Vol. 5 - 
+Belgian Style Quadrupel Ale (0.128 ABV).  This beer is sold in COLORADO.**
 ```{r, echo=TRUE}
 beer$State[which.max(beer$ABV)]
-
-beer$State[which.max(beer$IBU)]
 ```
 
-##Questions/Whats left?? - This section should be deleted prior to finalization##
-# 1) It looks like the code chunk above regarding NA's helps to alleviate our NA's, but we #didn't provide the
-# initial total for NA's which was the ask.  Do we need to do that above?
-# 2) I am not sure the ggplot above is performing as expected? Lets discuss.
-# 3) Need to create a scatterplot to discuss the relationship between ABV and IBU and #summarize.
+We are further able to confirm that the states with the highest median bitter beers as measured in IBU's are NY, OH, NC, OR, PA, NM, MT, SC, and NJ respectively, with each state returning
+a median IBU score of 135.  
+**However, the individual state returning the highest IBU (138)is OREGON (Bitter Bitch Imperial IPA)**
 
+```{r, echo=TRUE}
+beer$State[which.max(beer$IBU)]
+```
+*What is the relationship of Alcohol content and Bitterness for MABco's beer offerings?*
+The graph below is a scatterplot that examines the relationship between ABV and IBU for each
+beer that MABco has provided us data on.  As you can see there is a direct linear correlation 
+betwen the bitterness of the beer and it's corresponding alcohol content.
+
+
+```{r, echo=TRUE}
+## Scatterplot examining relationship between bitterness and alcohol content ##
+## ABV vs. IBU 
+library(car)
+scatterplot(ABV ~ IBU, data=merged, 
+  	xlab="Alcohol Content in ABV", ylab="Bitterness in IBU", 
+   main="Relationship between ABV and IBU", 
+   labels=row.names(merged))
+```
+
+
+
+##WE NEED TO SUMMARIZE OUR FINDINGS HERE##
 
 
