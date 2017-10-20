@@ -11,7 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Mega Awesome Beer Corp. (MABco), has commissioned Data Busters, Inc.(DBI) to examine data sets they have provided, with the purpose of answering some key questions and findings that should be derived directly from the data provided.  These are the results. 
 
-Two data sets were provided by MABco and used by DBI to provide the findings below.
+Two data sets were provided by MABco and used by DBI to provide the findings below.  One data 
+set provides background on the beer offerings currently in production at MABco, and the other
+provides brewery data where each beer is produced.  We've read the raw data into our systems
+for analysis.
 
 ```{r, echo=TRUE}
 BeerData <- read.csv2(file="C:/Users/henlek1/Desktop/Beers.csv", header=TRUE, sep=",", col.name=c("Name", "BeerID", "ABV", "IBU", "BreweryID", "Style", "Ounces"))
@@ -22,7 +25,8 @@ BrewiesData <- read.csv2(file="C:/Users/henlek1/Desktop/Breweries.csv", header=T
 Below is the summary for both data sets.  As you can see the data provided is organized
 into 2410 types of beer, and between the two sets of data we have 11 measurable variables 
 to work with.  We will walk you through the results below, and provide you with the
-background necessary to understand the context behind our findings.
+background necessary to understand the context behind our findings, and hopefully answer
+all of your questions.
 ```{r, echo=TRUE}
 summary (BeerData)
 str(BeerData)
@@ -31,7 +35,8 @@ str(BrewiesData)
 ```
 
 In order to take full advantage of the data provided we have opted to merge the two files.
-The new merged data set contains ALL the measurable variables in one file called "merged"
+The new merged data set contains ALL the measurable variables in one file called "merged",
+but will now allow us to cross reference the beer and brewery data for a more complete analysis.
 
 ```{r,  echo=TRUE}
 merged <- merge(BeerData, BrewiesData, by = "BreweryID", all=FALSE)
@@ -40,17 +45,14 @@ merged <- merge(BeerData, BrewiesData, by = "BreweryID", all=FALSE)
 To further organize our data we have taken a look at the first and last few entries within
 our newly merged data set.  This will allow us to a) ensure we have a better understanding of
 the new data file we are working with, and b) help to ensure all data was properly pulled 
-into the file as expected.  Upon inspection of the 'merge' file we see no unexpected issues.
+into the file as expected.  Upon inspection of the first 6 and last 6 entries within the 'merged' file we see no unexpected issues.
 
 ```{r, echo=TRUE}
 head(merged)
 tail(merged)
 ```
 
-## I think we need to provide an NA total here prior to correcting them? ##
-As expected, we do encounter some missing data that are being incorrectly measured as "NA"
-This is not unusual, and we are able to reformat the data with some simple coding behind the
-scenes that reassigns anything with an unmeasurable "NA" to a zero (0) as appropriate.
+As expected, we did encounter some instances of missing data after the merge.  Specifically, there were 1067 instances in total of missing data that were being incorrectly measured as "NA".  There were 62 instances in the ABV column and 1005 in the IBU column.  
 
 ```{r, echo=TRUE}
 ##First we must fix the numeric columns incorrectly listed as ordered factors
@@ -65,17 +67,10 @@ colSums(is.na(merged))
 ```
 
 Now that we've organized the data provided we can get down to providing the information that
-you've requested.  In order to further understand MABco's presence in each state we have
-sorted the merged data by city and state.
+you've requested.  In order to further understand MABco's brewery presence in each U.S. state we have provided a summary table below:
 
 ```{r, echo=TRUE}
-beer <- merged[order(merged$City),] 
-```
-
-Given the merged results DBI was able to confirm that MABco's presence in each U.S.
-state is as follows:
-
-```{r, echo=TRUE}
+beer <- merged[order(merged$City),]
 table(beer$State[beer$BreweryID])
 ```
 
@@ -100,7 +95,7 @@ mediansByState <- data.frame(State=allStates, ABV_median = beer$StateABVMedian[a
 mediansByState
 ``` 
 
-To help MABco better understand these results we've plotted them graphically.
+To help MABco better understand these results we've also plotted them graphically for your reference.
 ```{r, echo=TRUE}
 library(ggplot2)
 ##Create a plot with the staes along the x-axis
@@ -138,10 +133,17 @@ a median IBU score of 135.
 ```{r, echo=TRUE}
 beer$State[which.max(beer$IBU)]
 ```
+
+```{r, echo=TRUE}
+summary(beer$ABV)
+```
+
+
+
 *What is the relationship of Alcohol content and Bitterness for MABco's beer offerings?*
 The graph below is a scatterplot that examines the relationship between ABV and IBU for each
 beer that MABco has provided us data on.  As you can see there is a direct linear correlation 
-betwen the bitterness of the beer and it's corresponding alcohol content.
+betwen the bitterness of the beer and it's corresponding alcohol content.  As the alcohol content increases, so does the bitterness.
 
 
 ```{r, echo=TRUE}
@@ -156,6 +158,6 @@ scatterplot(ABV ~ IBU, data=merged,
 
 
 
-##WE NEED TO SUMMARIZE OUR FINDINGS HERE##
+In summary DBI has provided MABco with a look at it's brewery presence (by U.S. State), and the results show the top five to be Texas (255), Colorado (253), Indiana (199), Oregon (188), and New York (168).  We've also provided data regarding the median Alcohol by volume (ABV) by each state.  Our findings determined that the states with the highest median (ABV) are Georgia, Florida, and Idaho, each recording a median of 0.092 respectively.  We also called out that although these states recorded the highest median values, the state with highest overall ABV from a single beer offering was found outside of this population.  Colorado sells the beer with the overall highest ABV offered (Lee Hill Series Vol. 5 - Belgian Style Quadrupel Ale (0.128 ABV)).  When examining all beer offerings the overall average (ABV) was found to be 0.05977.  Further, we provided data regarding the bitterness of MABco's beer offerings as measured in (IBU), and reported our findings by state. DBI determined that the states with the highest median bitter beers as measured in IBU's are NY, OH, NC, OR, PA, NM, MT, SC, and NJ respectively, with each state returning a median IBU score of (135 IBU).  When measuring (IBU) overall maximum's we found that the individual state returning the highest IBU (138) was Oregon (Bitter Bitch Imperial IPA).  Please note the state with the maximum bitterness value does reside in the highest median population we examined (unlike the ABV findings).  Lastly, we provided a graphical representation outlining the relationship between the Alcohol by Volume (ABV) and the bitterness (IBU) of each of MABco's beer offerings.  The graph clearly outlined a positive linear relationship between the variables.  In general, as the ABV increased, so did the bitterness levels as recorded by IBU.  Further evaluation can be conducted here with MABco's direction if more detailed analysis is needed regarding the noted correlation.
 
-
+This concludes our analysis.
